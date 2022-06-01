@@ -2,12 +2,30 @@ import detectEthereumProvider from "@metamask/detect-provider"
 import { Strategy, ZkIdentity } from "@zk-kit/identity"
 import { generateMerkleProof, Semaphore } from "@zk-kit/protocols"
 import { providers } from "ethers"
+import { useForm } from "react-hook-form"
+import { object, string, number } from 'yup'
 import Head from "next/head"
 import React from "react"
 import styles from "../styles/Home.module.css"
 
 export default function Home() {
     const [logs, setLogs] = React.useState("Connect your wallet and greet!")
+
+    const {register, handleSubmit} = useForm({
+        defaultValues: {
+          Name: "",
+          Age: "",
+          Address:"",
+          Message:""
+        }
+      });
+
+    let schema = object({
+        Name: string().required(),
+        Age: number().required().positive().integer(),
+        Address: string().required(),
+        Message: string().required()
+      });
 
     async function greet() {
         setLogs("Creating your Semaphore identity...")
@@ -74,8 +92,31 @@ export default function Home() {
 
                 <div className={styles.logs}>{logs}</div>
 
-                <div onClick={() => greet()} className={styles.button}>
-                    Greet
+                <div className={styles.formDiv}>
+                    <form
+                        onSubmit= { handleSubmit((data) => { console.log(JSON.stringify(data) )
+                        schema.validate(JSON.stringify(data))}
+                    )}>
+
+                        <label>Name</label>
+                        <input {...register("Name")} defaultValue="Name" /><br></br>
+
+                        <label>Age</label>
+                        <input {...register("Age")} defaultValue="Age" /><br></br>
+
+                        <label>Address</label>
+                        <input {...register("Address")} defaultValue="Address" /><br></br>
+
+                        <label>Message</label>
+                        <input {...register("Message")} defaultValue="Message" /><br></br>
+
+                        <input type="submit" name="submit"/>
+
+                    </form>     
+
+                    <p className={styles.description}>A simple implementaion of a greeter</p> 
+
+                    <div onClick={() => greet()} className={styles.button}>Greet</div>
                 </div>
             </main>
         </div>

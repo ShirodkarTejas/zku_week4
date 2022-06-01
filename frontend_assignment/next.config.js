@@ -18,7 +18,8 @@ const nextConfig = {
                 readline: false,
                 ejs: false,
                 assert: require.resolve("assert"),
-                path: false
+                path: false,
+                events: require.resolve("events/"),
             }
 
             return config
